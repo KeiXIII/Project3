@@ -7,77 +7,90 @@
 #include "HashTable.h"
 
 HashTable::HashTable(){
-    table = new HashNode*[SIZE];
-    for(int i = 0; i < SIZE; i++)
-        table[i] = NULL;
+    Event event;
+    for(int i = 0; i < SIZE; i++){
+        for(int j = 0; j < SIZE; j++){
+        container[i][j] = event;
+        }
+    }
 }
 
 HashTable::~HashTable(){
-    for(int i = 0; i < SIZE; i++){
-        if(table[i] != NULL){
-            HashNode* begin = table[i];
-            while(begin != NULL){
-                HashNode* previous = begin;
-                begin = begin->next;
-                delete previous;
-            }
-        }
-    }
-    delete[] table;
-}
-int HashTable::HashKeyFunc(int key){
-    return key % SIZE;
 }
 
-void HashTable::input(int key, int value){
-    int HashKey = HashKeyFunc(key);
-    HashNode* prev = NULL;
-    if(table[HashKey] == NULL)
-        table[HashKey] = new HashNode(key, value);
+int HashTable::EventKeyFunc(string title){
+    
+    return 1;
+}
+
+void HashTable::input(string title, int day, MONTH month, int year, int hour, int minutes, string descript){
+    int key = EventKeyFunc(title);
+    Event e;
+    Event eve(title, day, month, year, hour, minutes, descript);
+    int count = 0;
+    if(container[key][0].notSimilar(e) == false)
+        container[key][0].insert(eve);
     else{
-        HashNode* begin = table[HashKey];
-        while(begin != NULL && begin->value < value){
-            prev = begin;
-            begin = begin->next;
-        }
-        if(begin == NULL)
-            begin = new HashNode(key, value);
-        else{
-            prev->next = new HashNode(key, value);
-            prev->next->next = begin;
-        }
+        do{
+            count++;
+        }while(container[key][count].notSimilar(e) == true);
+        container[key][count].insert(eve);
     }
 }
 
-void HashTable::removeKey(int key){
-    int HashKey = HashKeyFunc(key);
-    HashNode* begin = table[HashKey];
-    HashNode* prev = NULL;
-    if(begin == NULL || begin->key != key){
+void HashTable::removeEvent(string title){
+    int key = EventKeyFunc(title);
+    int count = 0;
+    Event e;
+    //if event doesn't exist, return
+    if(searchEvent(title).notSimilar(e) == false)
         return;
+    
+    //if in first element of array, shift all elements forward
+    if(container[key][0].getTitle() == title){
+        while(container[key][count].notSimilar(e) == true){
+            container[key][count] = container[key][count+1];
+            count++;
+        }
     }
-    while(begin->next != NULL){
-        prev = begin;
-        begin = begin->next;
-    }
-    if(prev != NULL){
-        prev->next = begin->next;
-    }
-    delete begin;
+    else{
+        //finds the desired event, searching by title
+        while(container[key][count].getTitle() != title){
+            count++;
+        }
+        if(container[key][count].getTitle() == title){
+            //if last element in array, make last element NULL
+            if(container[key][count+1].notSimilar(e) == false)
+                container[key][count].insert(e);
+            else{
+                //if in the middle, 
+                while(container[key][count].notSimilar(e) == true){
+                    container[key][count].insert(container[key][count+1]);
+                    count++;
+                }
+            }
+        }
+    } 
 }
 
-bool HashTable::searchKey(int key){
-    int HashKey = HashKeyFunc(key);
-    if(table[HashKey] == NULL)
-        return false;
+Event HashTable::searchEvent(string title){
+    int key = EventKeyFunc(title);
+    int count = 1;
+    Event e;
+    int found = 1;
+    
+    if(container[key][0].getTitle() == title)
+        return container[key][0];
     else{
-        HashNode* begin = table[HashKey];
-        while(begin != NULL){
-            if(begin->key == key){
-                cout << begin->value << " ";
-            }
-            begin = begin->next;
-        }
-        return true;
+        do{
+            if(container[key][count].getTitle() == title)
+                found = 0;
+            else
+                count++;
+        }while(container[key][count].notSimilar(e) == true && found == 1);
     }
+    if(found == 0)
+        return container[key][count];
+    else
+        return e;
 }
