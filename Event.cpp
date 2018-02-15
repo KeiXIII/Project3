@@ -20,11 +20,14 @@ Event::Event(string newTitle, int day, MONTH month, int year, int hour, int minu
 	description = descript;
 }
 
-void Event::displayEvent() {
-	cout << "Event: " << title << endl;
-	cout << "Date: " << MONTH(date.tm_mon) << " " << date.tm_mday << ", " << date.tm_year << endl;
-	cout << "Time: " << date.tm_hour << ":" << date.tm_min << endl;
-	cout << "Description: " << description << endl;
+void Event::displayEvent(ofstream &fout) {
+	fout << title << endl;
+	fout << description << endl;
+	fout << date.tm_hour << endl;
+	fout << date.tm_min << endl;
+	fout << MONTH(date.tm_mon) << endl;
+	fout << date.tm_mday << endl;
+	fout << date.tm_year << endl;
 }
 
 void Event::editTitle(string newTitle) {
