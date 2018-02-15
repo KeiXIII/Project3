@@ -1,3 +1,5 @@
 As a student, I want to create a reminder for exams so that I know when exams come to prepare.
 As a employee, I want to make a reminder for project's deadline so that I can be alerted. 
 As a phone user, I want to create reminder for my friends' birthdays, so that I don't forget to say happy birthday to them.
+As a musician, I want to save all my dates to a reminder so that i won't forget my upcomming performances.
+As a store manager, I want to set reminders for all holidays that will allow me to have sales at my store.
